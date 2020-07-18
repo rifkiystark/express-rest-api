@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken");
+const db = require("../models");
+const SessionToken = db.sessionToken;
 
 exports.validateToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -7,7 +9,11 @@ exports.validateToken = async (req, res, next) => {
     res.status(401).json({ message: "Authorization not found" });
   }
   try {
-    const user = await jwt.verify(token, process.env.JWT_TOKEN);
+    const sessionToken = await SessionToken.findOne({ token: token });
+    if (!sessionToken) {
+      throw Error("token expired");
+    }
+    const user = jwt.verify(token, process.env.JWT_TOKEN);
     if (user) {
       next();
     } else {

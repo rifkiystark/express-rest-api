@@ -1,6 +1,7 @@
 const db = require("../models");
 const emailer = require("../helper/emailer");
 const User = db.user;
+const SessionToken = db.sessionToken;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
@@ -49,6 +50,8 @@ exports.login = async (req, res) => {
           process.env.JWT_TOKEN,
           { expiresIn: "30d" }
         );
+        const sessionToken = new SessionToken({ token: accessToken });
+        await sessionToken.save();
         res.send({
           status: "success",
           message: "Login berhasil",
@@ -123,5 +126,27 @@ exports.me = async (req, res) => {
     }
   } catch (err) {
     res.send(err);
+  }
+};
+
+exports.logout = async (req, res) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    if (token == null) return res.sendStatus(401);
+    const deleted = await SessionToken.deleteOne({ token: token });
+    if (deleted.ok) {
+      res.send({
+        status: "success",
+        message: "Logout success",
+      });
+    } else {
+      res.status(402).send({
+        status: "failed",
+        message: "Logout failed",
+      });
+    }
+  } catch (err) {
+    res.status(402).send({ status: "Failed" });
   }
 };

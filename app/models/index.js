@@ -10,5 +10,6 @@ db.mongoose = mongoose;
 db.url = dbConfig.url;
 db.tutorials = require("./tutorial.model.js");
 db.user = require("./user.model.js");
+db.sessionToken = require("./sessionToken.model.js");
 
 module.exports = db;
