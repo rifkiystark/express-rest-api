@@ -1,0 +1,40 @@
+{
+  "name": "rest-api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
+    "express": "~4.16.1",
+    "express-validation": "^3.0.5",
+    "joi": "^17.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.24",
+    "mongoose-unique-validator": "^2.0.3",
+    "morgan": "~1.9.1",
+    "nodemailer": "^6.4.10"
+  },
+  "main": "server.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rifkiystark/express-rest-api.git"
+  },
+  "keywords": [
+    "express",
+    "restapi"
+  ],
+  "author": "rifkiystark",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rifkiystark/express-rest-api/issues"
+  },
+  "homepage": "https://github.com/rifkiystark/express-rest-api#readme",
+  "description": ""
+}
