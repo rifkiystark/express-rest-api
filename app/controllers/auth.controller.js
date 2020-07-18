@@ -2,21 +2,30 @@ const db = require("../models");
 const emailer = require("../helper/emailer");
 const User = db.user;
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 exports.register = async (req, res) => {
   // Create a Tutorial
   const { body } = req;
-  const user = new User({
-    username: body.username,
-    email: body.email,
-    password: body.password,
-    isVerified: false,
-  });
+
   try {
+    const passwordHashed = bcrypt.hashSync(body.password, 10);
+    const user = new User({
+      username: body.username,
+      email: body.email,
+      password: passwordHashed,
+      fullname: body.fullname,
+      isVerified: false,
+    });
+
     const registerData = await user.save(user);
     if (registerData) {
       emailer.send(registerData);
-      res.send(registerData);
+      res.send({
+        status: "success",
+        message: "User has been registered",
+        data: [],
+      });
     }
   } catch (err) {
     res.status(500).json({
@@ -31,19 +40,36 @@ exports.login = async (req, res) => {
   try {
     const user = await User.findOne({
       username: body.username,
-      password: body.password,
     });
 
     if (user) {
-      const accessToken = jwt.sign(
-        { username: user.username },
-        process.env.JWT_TOKEN,
-        { expiresIn: "30d" }
-      );
-      res.send({ token: accessToken });
+      if (bcrypt.compareSync(body.password, user.password)) {
+        const accessToken = jwt.sign(
+          { username: user.username },
+          process.env.JWT_TOKEN,
+          { expiresIn: "30d" }
+        );
+        res.send({
+          status: "success",
+          message: "Login berhasil",
+          data: [
+            {
+              token: accessToken,
+            },
+          ],
+        });
+      } else {
+        res.status(402).send({
+          status: "not found",
+          message: "Password salah",
+          data: [],
+        });
+      }
     } else {
-      res.status(400).json({
-        message: "user tidak ada",
+      res.status(402).send({
+        status: "not found",
+        message: "User belum terdaftar",
+        data: [],
       });
     }
   } catch (err) {
@@ -54,20 +80,24 @@ exports.login = async (req, res) => {
 };
 
 exports.verify = async (req, res) => {
-  // Create a Tutorial
-
-  const filter = {
-    _id: req.params.id,
-  };
+  const id = req.params.id;
   const dataUpdate = {
     isVerified: true,
   };
-
-  const user = await User.findOneAndUpdate(filter, dataUpdate);
-  if (user) {
-    res.send(user);
-  } else {
-    res.status(400).send({ status: "asdasd" });
+  try {
+    const user = await User.findById(id);
+    if (user) {
+      if (user.isVerified) {
+        res.send("<h1>Email sudah terverifikasi</h1>");
+      } else {
+        await User.findByIdAndUpdate(id, dataUpdate);
+        res.send("<h1>Emailmu berhasil diverifikasi</h1>");
+      }
+    } else {
+      res.status(400).send("<h1>Email belum terdaftar</h1>");
+    }
+  } catch (err) {
+    res.status(500).send("<h1>Server Error</h1>");
   }
 };
 
@@ -76,10 +106,18 @@ exports.me = async (req, res) => {
   const token = authHeader && authHeader.split(" ")[1];
   if (token == null) return res.sendStatus(401); // if there isn't any token
   try {
-    const user = await jwt.verify(token, process.env.JWT_TOKEN);
+    const user = jwt.verify(token, process.env.JWT_TOKEN);
     if (user) {
       const dataUser = await User.findOne({ username: user.username });
-      res.send(dataUser);
+      res.send({
+        status: "succes",
+        message: "Get user detail success",
+        data: {
+          fullname: dataUser.fullname,
+          email: dataUser.email,
+          expiresIn: user.exp,
+        },
+      });
     } else {
       res.send({ maessage: "not valid" });
     }

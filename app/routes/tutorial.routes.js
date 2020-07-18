@@ -1,12 +1,12 @@
 module.exports = (app) => {
   const tutorials = require("../controllers/tutorial.controller");
   const { validate } = require("../middleware/tutorial.middleware");
-  const { validateToken } = require("../middleware/auth.middleware");
+  const authValidator = require("../middleware/auth.middleware");
 
   var router = require("express").Router();
 
   // Create a new Tutorial
-  router.post("/", validateToken, validate, tutorials.create);
+  router.post("/", authValidator.validateToken, validate, tutorials.create);
 
   // Retrieve all Tutorials
   router.get("/", tutorials.findAll);

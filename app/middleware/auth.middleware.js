@@ -1,11 +1,6 @@
-const Joi = require("@hapi/joi");
 const jwt = require("jsonwebtoken");
-// const tutorialScheme = Joi.object().keys({
-//   title: Joi.string().required(),
-//   description: Joi.string().required(),
-// });
 
-const validateToken = async (req, res, next) => {
+exports.validateToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (token == null) {
@@ -19,10 +14,9 @@ const validateToken = async (req, res, next) => {
       res.send({ message: "Not authorized" });
     }
   } catch (err) {
-    res.send(err);
+    res.status(402).send({
+      status: "failed",
+      message: err.message,
+    });
   }
-};
-
-module.exports = {
-  validateToken,
 };
