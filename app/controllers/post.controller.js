@@ -96,3 +96,21 @@ exports.getAll = async (req, res) => {
     res.send(err.message);
   }
 };
+
+exports.getAllMyPost = async (req, res) => {
+  try {
+    const user = await auth.getUserByToken(req);
+    const posts = await Post.find(
+      { user_id: user._id },
+      {},
+      { sort: { createdAt: -1 } }
+    ).populate("user_id", "fullname email", "user");
+    res.send({
+      status: true,
+      message: "Get all post data by token",
+      data: posts,
+    });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
