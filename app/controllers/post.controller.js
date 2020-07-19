@@ -56,3 +56,26 @@ exports.edit = async (req, res) => {
     });
   }
 };
+
+exports.delete = async (req, res) => {
+  const { id } = req.body;
+  const user = await auth.getUserByToken(req);
+  const filter = { user_id: user._id, _id: id };
+
+  try {
+    const post = await Post.findOneAndDelete(filter);
+    if (post) {
+      res.send({ status: true, message: "berhasil dihapus" });
+    } else {
+      res.status(404).send({
+        status: false,
+        message: "post with authentication id not found",
+      });
+    }
+  } catch (err) {
+    res.status(500).send({
+      status: false,
+      message: err.message,
+    });
+  }
+};

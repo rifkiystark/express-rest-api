@@ -40,3 +40,21 @@ exports.validateUpdate = (req, res, next) => {
     next();
   }
 };
+
+exports.validateDelete = (req, res, next) => {
+  const postScheme = Joi.object().keys({
+    id: Joi.string().required(),
+  });
+  const result = postScheme.validate(req.body, { abortEarly: false });
+  if (result.error) {
+    const { details } = result.error;
+    let pesan = [];
+    details.map((i) => pesan.push({ [i.context.key]: i.message }));
+    res.status(400).json({
+      message: "Invalid request",
+      data: pesan,
+    });
+  } else {
+    next();
+  }
+};

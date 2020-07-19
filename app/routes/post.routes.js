@@ -18,6 +18,12 @@ module.exports = (app) => {
     postMiddleware.validateUpdate,
     postController.edit
   );
+  router.delete(
+    "/",
+    authMiddleware.validateToken,
+    postMiddleware.validateDelete,
+    postController.delete
+  );
 
   app.use("/post", router);
 };
