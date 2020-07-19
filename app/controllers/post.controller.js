@@ -2,6 +2,7 @@ const db = require("../models");
 const User = db.user;
 const Post = db.post;
 const jwt = require("jsonwebtoken");
+const auth = require("../helper/auth");
 
 exports.post = async (req, res) => {
   const token = req.headers["authorization"].split(" ")[1];
@@ -29,5 +30,29 @@ exports.post = async (req, res) => {
     }
   } catch (err) {
     res.status(500).send({ status: "failed", message: err.message });
+  }
+};
+
+exports.edit = async (req, res) => {
+  const { caption, id } = req.body;
+  const user = await auth.getUserByToken(req);
+  const filter = { user_id: user._id, _id: id };
+  const dataUpdate = { caption: caption ? caption : "" };
+
+  try {
+    const post = await Post.findOneAndUpdate(filter, dataUpdate);
+    if (post) {
+      res.send({ status: true, message: "berhasil update" });
+    } else {
+      res.status(404).send({
+        status: false,
+        message: "post with authentication id not found",
+      });
+    }
+  } catch (err) {
+    res.status(500).send({
+      status: false,
+      message: err.message,
+    });
   }
 };

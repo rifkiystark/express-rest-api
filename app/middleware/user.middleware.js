@@ -12,7 +12,7 @@ exports.validateRegister = (req, res, next) => {
     const { details } = result.error;
     let pesan = [];
     details.map((i) => pesan.push({ [i.context.key]: i.message }));
-    res.status(422).json({
+    res.status(400).json({
       message: "Invalid request",
       data: pesan,
     });
@@ -31,7 +31,7 @@ exports.validateLogin = (req, res, next) => {
     const { details } = result.error;
     let pesan = [];
     details.map((i) => pesan.push({ [i.context.key]: i.message }));
-    res.status(422).json({
+    res.status(400).json({
       message: "Invalid request",
       data: pesan,
     });

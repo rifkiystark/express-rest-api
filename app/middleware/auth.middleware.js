@@ -6,22 +6,27 @@ exports.validateToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (token == null) {
-    res.status(401).json({ message: "Authorization not found" });
+    return res
+      .status(412)
+      .json({ status: false, message: "Authorization token required" });
   }
   try {
     const sessionToken = await SessionToken.findOne({ token: token });
     if (!sessionToken) {
-      throw Error("token expired");
+      res.status(404).send({
+        status: false,
+        message: "Authorization token not valid or not found",
+      });
     }
     const user = jwt.verify(token, process.env.JWT_TOKEN);
     if (user) {
       next();
     } else {
-      res.send({ message: "Not authorized" });
+      res.status(401).send({ status: false, message: "Not authorized" });
     }
   } catch (err) {
-    res.status(402).send({
-      status: "failed",
+    res.status(404).send({
+      status: false,
       message: err.message,
     });
   }
