@@ -79,3 +79,20 @@ exports.delete = async (req, res) => {
     });
   }
 };
+
+exports.getAll = async (req, res) => {
+  try {
+    const posts = await Post.find({}, {}, { sort: { createdAt: -1 } }).populate(
+      "user_id",
+      "fullname email",
+      "user"
+    );
+    res.send({
+      status: true,
+      message: "Get all post data",
+      data: posts,
+    });
+  } catch (err) {
+    res.send(err.message);
+  }
+};

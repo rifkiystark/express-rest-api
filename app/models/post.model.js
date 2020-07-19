@@ -6,7 +6,7 @@ const Post = mongoose.model(
     {
       imgsrc: { type: String, required: true },
       caption: { type: String, default: "" },
-      user_id: { type: String, required: true },
+      user_id: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     },
     { timestamps: true }
   )

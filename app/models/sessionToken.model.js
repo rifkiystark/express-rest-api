@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const SessionToken = mongoose.model(
-  "sessionToken",
+  "sessiontoken",
   mongoose.Schema(
     {
       token: { type: String, required: true },

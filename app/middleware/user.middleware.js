@@ -4,7 +4,7 @@ exports.validateRegister = (req, res, next) => {
   const registerScheme = Joi.object().keys({
     username: Joi.string().required(),
     email: Joi.string().required().email(),
-    fullname: Joi.string(),
+    fullname: Joi.string().required(),
     password: Joi.string().required(),
   });
   const result = registerScheme.validate(req.body, { abortEarly: false });

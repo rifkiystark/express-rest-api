@@ -6,7 +6,7 @@ exports.validateImage = (req, res, next) => {
   if (!req.files || !req.files.image) {
     res.status(400).send({
       status: "failed",
-      message: "No file uploaded",
+      message: "image field not found",
     });
   } else {
     const image = req.files.image;

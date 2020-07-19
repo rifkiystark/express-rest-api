@@ -24,6 +24,7 @@ module.exports = (app) => {
     postMiddleware.validateDelete,
     postController.delete
   );
+  router.get("/", postController.getAll);
 
   app.use("/post", router);
 };
