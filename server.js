@@ -2,8 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
 const app = express();
+const fileUpload = require("express-fileupload");
 const db = require("./app/models");
 
 const corsOptions = {
@@ -25,6 +25,8 @@ db.mongoose
 
 app.use(cors(corsOptions));
 
+app.use(fileUpload({ createParentPath: true }));
+
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -35,6 +37,7 @@ app.get("/", (req, res) => {
 
 require("./app/routes/tutorial.routes")(app);
 require("./app/routes/auth.routes")(app);
+require("./app/routes/post.routes")(app);
 
 const PORT = process.env.PORT || 8000;
 

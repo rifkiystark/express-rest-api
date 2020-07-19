@@ -105,9 +105,7 @@ exports.verify = async (req, res) => {
 };
 
 exports.me = async (req, res) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.sendStatus(401); // if there isn't any token
+  const token = req.headers["authorization"].split(" ")[1];
   try {
     const user = jwt.verify(token, process.env.JWT_TOKEN);
     if (user) {
