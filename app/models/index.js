@@ -12,5 +12,6 @@ db.tutorials = require("./tutorial.model.js");
 db.user = require("./user.model.js");
 db.sessionToken = require("./sessionToken.model.js");
 db.post = require("./post.model.js");
+db.comment = require("./comment.model");
 
 module.exports = db;
