@@ -1,6 +1,7 @@
 const db = require("../models");
 const User = db.user;
 const Post = db.post;
+const Like = db.like;
 const jwt = require("jsonwebtoken");
 const auth = require("../helper/auth");
 
@@ -82,11 +83,23 @@ exports.delete = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    const posts = await Post.find({}, {}, { sort: { createdAt: -1 } }).populate(
-      "user_id",
-      "fullname email",
-      "user"
+    const user = await auth.getUserByToken(req);
+    const posts = await Post.find({}, "-__v", { sort: { createdAt: -1 } })
+      .populate("user_id", "fullname -_id", "user")
+      .lean();
+
+    await Promise.all(
+      posts.map(async (post) => {
+        let likes = await Like.find({
+          post_id: post._id,
+        });
+        post.isLiked = likes.some(
+          (like) => like.user_id.toString() == user._id.toString()
+        );
+        post.totalLike = likes.length;
+      })
     );
+
     res.send({
       status: true,
       message: "Get all post data",
