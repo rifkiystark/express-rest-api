@@ -39,6 +39,7 @@ require("./app/routes/tutorial.routes")(app);
 require("./app/routes/auth.routes")(app);
 require("./app/routes/post.routes")(app);
 require("./app/routes/comment.routes")(app);
+require("./app/routes/like.routes")(app);
 
 const PORT = process.env.PORT || 8000;
 
