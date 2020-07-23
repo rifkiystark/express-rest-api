@@ -11,7 +11,7 @@ const corsOptions = {
 };
 
 db.mongoose
-  .connect(db.urlProd, {
+  .connect(db.url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

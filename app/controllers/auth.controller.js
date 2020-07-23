@@ -44,6 +44,11 @@ exports.login = async (req, res) => {
     });
 
     if (user) {
+      if (!user.isVerified) {
+        return res
+          .status(400)
+          .send({ status: false, message: "Email not verified" });
+      }
       if (bcrypt.compareSync(body.password, user.password)) {
         const accessToken = jwt.sign(
           { username: user.username },
