@@ -8,6 +8,7 @@ const db = {};
 
 db.mongoose = mongoose;
 db.url = dbConfig.url;
+db.urlProd = dbConfig.urlProd;
 db.tutorials = require("./tutorial.model.js");
 db.user = require("./user.model.js");
 db.sessionToken = require("./sessionToken.model.js");
