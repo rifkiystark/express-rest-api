@@ -4,10 +4,17 @@ const bodyParser = require("body-parser");
 const app = express();
 const fileUpload = require("express-fileupload");
 const db = require("./app/models");
-const path = require("path");
+const base = require("./app/helper/baseurl");
+const { Storage } = require("@google-cloud/storage");
+
+const storage = new Storage({
+  keyFilename: require("./app/config/firebase.json"),
+});
+
+const bucket = storage.bucket("gawe-5dd57.appspot.com");
 
 db.mongoose
-  .connect(db.url, {
+  .connect(base.databaseurl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -27,6 +34,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.json({ message: "Hey jude" });
+});
+
+app.post("/tes", (req, res) => {
+  //const file = bucket.file("my-file");
+  const contents = req.files.image;
+  const file = bucket.file("my-file.png");
+
+  file.save(contents, function (err) {
+    if (!err) {
+      console.log("berhasil");
+    }
+  });
 });
 
 require("./app/routes/tutorial.routes")(app);
