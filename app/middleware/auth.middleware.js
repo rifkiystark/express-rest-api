@@ -13,7 +13,7 @@ exports.validateToken = async (req, res, next) => {
   try {
     const sessionToken = await SessionToken.findOne({ token: token });
     if (!sessionToken) {
-      res.status(404).send({
+      return res.status(404).send({
         status: false,
         message: "Authorization token not valid or not found",
       });

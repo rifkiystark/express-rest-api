@@ -4,6 +4,7 @@ const Post = db.post;
 const Like = db.like;
 const jwt = require("jsonwebtoken");
 const auth = require("../helper/auth");
+const base = require("../helper/baseurl");
 
 exports.post = async (req, res) => {
   const token = req.headers["authorization"].split(" ")[1];
@@ -97,6 +98,7 @@ exports.getAll = async (req, res) => {
           (like) => like.user_id.toString() == user._id.toString()
         );
         post.totalLike = likes.length;
+        post.imgsrc = `${base.url}/image/${post.imgsrc}`;
       })
     );
 

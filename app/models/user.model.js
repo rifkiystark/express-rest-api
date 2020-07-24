@@ -6,7 +6,11 @@ const User = mongoose.model(
   mongoose
     .Schema(
       {
-        username: { type: String, required: true, unique: true },
+        username: {
+          type: String,
+          required: true,
+          unique: true,
+        },
         fullname: { type: String, required: true },
         email: { type: String, index: true, unique: true, required: true },
         password: { type: String, required: true },

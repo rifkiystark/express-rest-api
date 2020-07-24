@@ -29,8 +29,10 @@ exports.register = async (req, res) => {
       });
     }
   } catch (err) {
-    res.status(500).json({
-      message: err.errors,
+    res.status(500).send({
+      status: false,
+      message: "Server error",
+      data: err.errors,
     });
   }
 };
@@ -81,8 +83,10 @@ exports.login = async (req, res) => {
       });
     }
   } catch (err) {
-    res.status(500).json({
+    res.status(500).send({
+      status: false,
       message: "Server error",
+      data: err,
     });
   }
 };
@@ -125,10 +129,14 @@ exports.me = async (req, res) => {
         },
       });
     } else {
-      res.send({ maessage: "not valid" });
+      res.status(400).send({ status: false, message: "Token not valid" });
     }
   } catch (err) {
-    res.send(err);
+    res.status(500).send({
+      status: false,
+      message: "Server error",
+      data: err,
+    });
   }
 };
 
@@ -150,6 +158,10 @@ exports.logout = async (req, res) => {
       });
     }
   } catch (err) {
-    res.status(402).send({ status: "Failed" });
+    res.status(500).send({
+      status: false,
+      message: "Server error",
+      data: err,
+    });
   }
 };

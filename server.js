@@ -1,14 +1,10 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-const cors = require("cors");
 const app = express();
 const fileUpload = require("express-fileupload");
 const db = require("./app/models");
-
-const corsOptions = {
-  origin: "http://localhost:8080",
-};
+const path = require("path");
 
 db.mongoose
   .connect(db.url, {
@@ -22,8 +18,6 @@ db.mongoose
     console.log("Cannot connect to the database!", err);
     process.exit();
   });
-
-app.use(cors(corsOptions));
 
 app.use(fileUpload({ createParentPath: true }));
 
@@ -40,7 +34,7 @@ require("./app/routes/auth.routes")(app);
 require("./app/routes/post.routes")(app);
 require("./app/routes/comment.routes")(app);
 require("./app/routes/like.routes")(app);
-
+app.use("/image", express.static("uploads"));
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => {
