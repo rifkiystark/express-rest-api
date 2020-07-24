@@ -12,7 +12,7 @@ const storage = new Storage({
 });
 
 const bucket = storage.bucket("gawe-5dd57.appspot.com");
-
+console.log(base.databaseurl);
 db.mongoose
   .connect(base.databaseurl, {
     useNewUrlParser: true,
