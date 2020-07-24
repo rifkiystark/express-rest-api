@@ -84,10 +84,21 @@ exports.delete = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
+    let nextUrl = null;
+    const index = req.params.index ? req.params.index * 5 : 0;
     const user = await auth.getUserByToken(req);
-    const posts = await Post.find({}, "-__v", { sort: { createdAt: -1 } })
+    const posts = await Post.find({}, "-__v", {
+      sort: { createdAt: -1 },
+      skip: index,
+      limit: 5,
+    })
       .populate("user_id", "fullname -_id", "user")
       .lean();
+
+    if (posts.length == 5) {
+      const nextIndex = index / 5 + 1;
+      nextUrl = `${base.url}/post/${nextIndex}`;
+    }
 
     await Promise.all(
       posts.map(async (post) => {
@@ -104,6 +115,7 @@ exports.getAll = async (req, res) => {
 
     res.send({
       status: true,
+      nextUrl,
       message: "Get all post data",
       data: posts,
     });
