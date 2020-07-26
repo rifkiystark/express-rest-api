@@ -68,11 +68,12 @@ app.get("/send", (req, res) => {
     });
 });
 
-require("./app/routes/tutorial.routes")(app);
 require("./app/routes/auth.routes")(app);
 require("./app/routes/post.routes")(app);
 require("./app/routes/comment.routes")(app);
 require("./app/routes/like.routes")(app);
+require("./app/routes/firebaseToken.routes")(app);
+
 app.use("/image", express.static("uploads"));
 const PORT = process.env.PORT || 8000;
 
