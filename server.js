@@ -75,7 +75,7 @@ require("./app/routes/like.routes")(app);
 require("./app/routes/firebaseToken.routes")(app);
 
 app.use("/image", express.static("uploads"));
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
