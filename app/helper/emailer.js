@@ -3,10 +3,11 @@ const htmlVerification = require("../template/verification");
 
 exports.send = (data) => {
   const auth = {
-    service: "gmail",
+    host: "smtp.ethereal.email",
+    port: 587,
     auth: {
-      user: `${process.env.EMAIL}`,
-      pass: `${process.env.EMAIL_PASSWORD}`,
+      user: "bobby.torp79@ethereal.email",
+      pass: "fECsqZp7JXh2kwXSB9",
     },
   };
   const transporter = nodemailer.createTransport(auth);
