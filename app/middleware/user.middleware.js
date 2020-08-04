@@ -32,6 +32,7 @@ exports.validateLogin = (req, res, next) => {
     let pesan = [];
     details.map((i) => pesan.push({ [i.context.key]: i.message }));
     res.status(400).json({
+      status: false,
       message: "Invalid request",
       data: pesan,
     });

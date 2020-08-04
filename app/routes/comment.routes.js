@@ -19,5 +19,12 @@ module.exports = (app) => {
     commentController.delete
   );
 
+  router.get(
+    "/",
+    authMiddleware.validateToken,
+    commentMiddleware.validateGet,
+    commentController.get
+  );
+
   app.use("/comment", router);
 };

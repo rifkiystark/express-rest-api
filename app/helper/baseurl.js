@@ -1,7 +1,7 @@
 module.exports = {
   url:
     process.env.MODE == "DEVELOPMENT"
-      ? process.env.BASE_URL
+      ? process.env.BASE_URL + ":" + process.env.PORT
       : process.env.BASE_URL_PROD,
   databaseurl:
     process.env.MODE == "DEVELOPMENT"

@@ -25,15 +25,28 @@ exports.register = async (req, res) => {
       res.send({
         status: "success",
         message: "User has been registered",
-        data: [],
       });
     }
   } catch (err) {
-    res.status(500).send({
-      status: false,
-      message: "Server error",
-      data: err.errors,
-    });
+    if (err.errors) {
+      let errorMessage = {};
+      if (err.errors.email) {
+        errorMessage.email = "Email sudah ada";
+      }
+      if (err.errors.username) {
+        errorMessage.username = "Username sudah ada";
+      }
+      return res.status(400).send({
+        status: false,
+        message: "Validation error",
+        data: errorMessage,
+      });
+    } else {
+      return res.status(500).send({
+        status: false,
+        message: "Server error",
+      });
+    }
   }
 };
 
@@ -49,7 +62,7 @@ exports.login = async (req, res) => {
       if (!user.isVerified) {
         return res
           .status(400)
-          .send({ status: false, message: "Email not verified" });
+          .send({ status: false, message: "Email belum diverifikasi" });
       }
       if (bcrypt.compareSync(body.password, user.password)) {
         const accessToken = jwt.sign(
@@ -59,25 +72,23 @@ exports.login = async (req, res) => {
         );
         const sessionToken = new SessionToken({ token: accessToken });
         await sessionToken.save();
-        res.send({
-          status: "success",
+        return res.send({
+          status: true,
           message: "Login berhasil",
-          data: [
-            {
-              token: accessToken,
-            },
-          ],
+          data: {
+            token: accessToken,
+            type: "Bearer",
+          },
         });
       } else {
-        res.status(402).send({
-          status: "not found",
+        return res.status(400).send({
+          status: false,
           message: "Password salah",
-          data: [],
         });
       }
     } else {
-      res.status(402).send({
-        status: "not found",
+      return res.status(400).send({
+        status: false,
         message: "User belum terdaftar",
         data: [],
       });
@@ -147,18 +158,18 @@ exports.logout = async (req, res) => {
     if (token == null) return res.sendStatus(401);
     const deleted = await SessionToken.deleteOne({ token: token });
     if (deleted.ok) {
-      res.send({
+      return res.send({
         status: "success",
         message: "Logout success",
       });
     } else {
-      res.status(402).send({
+      return res.status(402).send({
         status: "failed",
         message: "Logout failed",
       });
     }
   } catch (err) {
-    res.status(500).send({
+    return res.status(500).send({
       status: false,
       message: "Server error",
       data: err,

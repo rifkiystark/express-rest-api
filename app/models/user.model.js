@@ -19,9 +19,7 @@ const User = mongoose.model(
       },
       { timestamps: true }
     )
-    .plugin(uniqueValidator, {
-      message: "Error, expected {PATH} to be unique.",
-    })
+    .plugin(require("mongoose-unique-validator"))
 );
 
 module.exports = User;

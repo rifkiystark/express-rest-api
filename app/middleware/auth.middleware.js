@@ -22,10 +22,10 @@ exports.validateToken = async (req, res, next) => {
     if (user) {
       next();
     } else {
-      res.status(401).send({ status: false, message: "Not authorized" });
+      return res.status(401).send({ status: false, message: "Not authorized" });
     }
   } catch (err) {
-    res.status(404).send({
+    return res.status(404).send({
       status: false,
       message: err.message,
     });

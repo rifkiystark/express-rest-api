@@ -5,6 +5,7 @@ const Like = db.like;
 const jwt = require("jsonwebtoken");
 const auth = require("../helper/auth");
 const base = require("../helper/baseurl");
+const Comment = require("../models/comment.model");
 
 exports.post = async (req, res) => {
   const token = req.headers["authorization"].split(" ")[1];
@@ -84,7 +85,7 @@ exports.delete = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    let nextUrl = null;
+    let nextIndex = null;
     const index = req.params.index ? req.params.index * 5 : 0;
     const user = await auth.getUserByToken(req);
     const posts = await Post.find({}, "-__v", {
@@ -96,8 +97,7 @@ exports.getAll = async (req, res) => {
       .lean();
 
     if (posts.length == 5) {
-      const nextIndex = index / 5 + 1;
-      nextUrl = `${base.url}/post/${nextIndex}`;
+      nextIndex = index / 5 + 1;
     }
 
     await Promise.all(
@@ -105,17 +105,19 @@ exports.getAll = async (req, res) => {
         let likes = await Like.find({
           post_id: post._id,
         });
+        let comments = await Comment.find({ post_id: post._id });
         post.isLiked = likes.some(
           (like) => like.user_id.toString() == user._id.toString()
         );
         post.totalLike = likes.length;
+        post.totalComment = comments.length;
         post.imgsrc = `${base.url}/image/${post.imgsrc}`;
       })
     );
 
     res.send({
       status: true,
-      nextUrl,
+      nextIndex,
       message: "Get all post data",
       data: posts,
     });

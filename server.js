@@ -5,6 +5,7 @@ const app = express();
 const fileUpload = require("express-fileupload");
 const db = require("./app/models");
 const base = require("./app/helper/baseurl");
+const cors = require("cors");
 
 console.log(base.databaseurl);
 db.mongoose
@@ -35,6 +36,7 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(cors());
 app.get("/", (req, res) => {
   res.json({ message: "Hey jude" });
 });

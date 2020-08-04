@@ -13,6 +13,7 @@ exports.validatePost = async (req, res, next) => {
     let pesan = [];
     details.map((i) => pesan.push({ [i.context.key]: i.message }));
     res.status(400).json({
+      status: false,
       message: "Invalid request",
       data: pesan,
     });
@@ -24,6 +25,7 @@ exports.validatePost = async (req, res, next) => {
         next();
       } else {
         res.status(400).json({
+          status: false,
           message: "Invalid request",
           data: {
             post: "Post data with id not found",
@@ -32,6 +34,7 @@ exports.validatePost = async (req, res, next) => {
       }
     } catch (err) {
       res.status(400).json({
+        status: false,
         message: "Invalid request",
         data: {
           post: "Post data with id not found",
@@ -51,6 +54,26 @@ exports.validateDelete = (req, res, next) => {
     let pesan = [];
     details.map((i) => pesan.push({ [i.context.key]: i.message }));
     res.status(400).json({
+      status: false,
+      message: "Invalid request",
+      data: pesan,
+    });
+  } else {
+    next();
+  }
+};
+
+exports.validateGet = (req, res, next) => {
+  const postScheme = Joi.object().keys({
+    post_id: Joi.string().required(),
+  });
+  const result = postScheme.validate(req.query, { abortEarly: false });
+  if (result.error) {
+    const { details } = result.error;
+    let pesan = [];
+    details.map((i) => pesan.push({ [i.context.key]: i.message }));
+    res.status(400).json({
+      status: false,
       message: "Invalid request",
       data: pesan,
     });
