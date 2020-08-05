@@ -93,7 +93,7 @@ exports.getAll = async (req, res) => {
       skip: index,
       limit: 5,
     })
-      .populate("user_id", "fullname -_id", "user")
+      .populate("user_id", "fullname profilePicture -_id", "user")
       .lean();
 
     if (posts.length == 5) {
@@ -129,11 +129,23 @@ exports.getAll = async (req, res) => {
 exports.getAllMyPost = async (req, res) => {
   try {
     const user = await auth.getUserByToken(req);
-    const posts = await Post.find(
-      { user_id: user._id },
-      {},
-      { sort: { createdAt: -1 } }
-    ).populate("user_id", "fullname email", "user");
+    const posts = await Post.find({ user_id: user._id }, "-user_id -__v", {
+      sort: { createdAt: -1 },
+    }).lean();
+    await Promise.all(
+      posts.map(async (post) => {
+        let likes = await Like.find({
+          post_id: post._id,
+        });
+        let comments = await Comment.find({ post_id: post._id });
+        post.isLiked = likes.some(
+          (like) => like.user_id.toString() == user._id.toString()
+        );
+        post.totalLike = likes.length;
+        post.totalComment = comments.length;
+        post.imgsrc = `${base.url}/image/${post.imgsrc}`;
+      })
+    );
     res.send({
       status: true,
       message: "Get all post data by token",

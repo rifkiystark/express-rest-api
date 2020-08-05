@@ -26,9 +26,9 @@ module.exports = (app) => {
     postController.delete
   );
 
+  router.get("/me", authMiddleware.validateToken, postController.getAllMyPost);
   router.get("/:index", authMiddleware.validateToken, postController.getAll);
   router.get("/", authMiddleware.validateToken, postController.getAll);
-  router.get("/me", authMiddleware.validateToken, postController.getAllMyPost);
 
   app.use("/post", router);
 };

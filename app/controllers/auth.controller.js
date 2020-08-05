@@ -4,6 +4,7 @@ const User = db.user;
 const SessionToken = db.sessionToken;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { getAvatar } = require("../helper/randomAvatar");
 
 exports.register = async (req, res) => {
   // Create a Tutorial
@@ -17,6 +18,7 @@ exports.register = async (req, res) => {
       password: passwordHashed,
       fullname: body.fullname,
       isVerified: false,
+      profilePicture: getAvatar(),
     });
 
     const registerData = await user.save(user);
@@ -131,12 +133,12 @@ exports.me = async (req, res) => {
     if (user) {
       const dataUser = await User.findOne({ username: user.username });
       res.send({
-        status: "succes",
+        status: true,
         message: "Get user detail success",
         data: {
           fullname: dataUser.fullname,
           email: dataUser.email,
-          expiresIn: user.exp,
+          profilePicture: dataUser.profilePicture,
         },
       });
     } else {
