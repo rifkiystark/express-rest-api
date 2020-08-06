@@ -11,7 +11,7 @@ exports.send = (data) => {
   });
   const mailOptions = {
     from: `${process.env.EMAIL_SENDER} <${process.env.EMAIL}>`,
-    to: `${data.username} <${data.email}>`,
+    to: `${data.fullname} <${data.email}>`,
     subject: "Verifikasi",
     html: htmlVerification.template(data),
   };
