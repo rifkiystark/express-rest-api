@@ -3,7 +3,7 @@ const htmlVerification = require("../template/verification");
 
 exports.send = (data) => {
   const transporter = nodemailer.createTransport({
-    service: "hotmail",
+    service: "gmail",
     auth: {
       user: process.env.EMAIL,
       pass: process.env.EMAIL_PASSWORD,
