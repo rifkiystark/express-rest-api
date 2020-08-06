@@ -37,6 +37,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors());
+
 app.get("/", (req, res) => {
   res.json({ message: "Hey jude" });
 });
@@ -77,6 +78,11 @@ require("./app/routes/like.routes")(app);
 require("./app/routes/firebaseToken.routes")(app);
 
 app.use("/image", express.static("uploads"));
+
+app.use("*", function (req, res) {
+  res.status(404).send({ status: false, message: "Url not found" });
+});
+
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {

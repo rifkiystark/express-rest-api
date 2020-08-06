@@ -43,7 +43,7 @@ exports.delete = async (req, res) => {
     } else {
       res.status(404).send({
         status: false,
-        message: "post with authentication id not found",
+        message: "comment with authentication id not found",
       });
     }
   } catch (err) {
