@@ -1,6 +1,9 @@
 const db = require("../models");
 const Like = db.like;
 const auth = require("../helper/auth");
+const FirebaseToken = require("../models/firebaseToken.model");
+const Post = require("../models/post.model");
+const { sendNotification } = require("../helper/notification");
 
 exports.post = async (req, res) => {
   try {
@@ -13,6 +16,14 @@ exports.post = async (req, res) => {
     const likeData = await like.save();
     //send response
     if (likeData) {
+      const dataPost = await Post.findById(req.body.post_id);
+      const dataToken = await FirebaseToken.find({ user_id: dataPost.user_id });
+      const tokens = [];
+      dataToken.forEach((token) => {
+        tokens.push(token.token);
+      });
+      const message = `${dataUser.username} menyukasi foto anda`;
+      sendNotification(tokens, message);
       res.send({
         status: true,
         message: "Liked",

@@ -6,6 +6,11 @@ const fileUpload = require("express-fileupload");
 const db = require("./app/models");
 const base = require("./app/helper/baseurl");
 const cors = require("cors");
+const { authRoutes } = require("./app/routes/auth.routes");
+const { postRoutes } = require("./app/routes/post.routes");
+const { commentRoutes } = require("./app/routes/comment.routes");
+const { likeRoutes } = require("./app/routes/like.routes");
+const { firebaseRoutes } = require("./app/routes/firebaseToken.routes");
 
 console.log(base.databaseurl);
 db.mongoose
@@ -21,15 +26,6 @@ db.mongoose
     process.exit();
   });
 
-var admin = require("firebase-admin");
-
-var serviceAccount = require("./app/config/serviceAccount.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://gawe-5dd57.firebaseio.com",
-});
-
 app.use(fileUpload({ createParentPath: true }));
 
 app.use(bodyParser.json());
@@ -42,40 +38,11 @@ app.get("/", (req, res) => {
   res.json({ message: "Hey jude" });
 });
 
-app.get("/send", (req, res) => {
-  var registrationToken =
-    "cYEYhlh7Jxg:APA91bHysvoia1szMEmcmBOb0VdNFVHs5Os9uxIWgG1O1czSr5kOx9U5nDujqjxYLi3cAMDE3aFNmriHh0MhQ1tOiHayadXn5_NU8UhRh3zKpqIKOODHdaROHAzbWSKcQD3G8PeoS3AY";
-
-  var message = {
-    data: {
-      score: "850",
-      time: "2:45",
-      message: "Ayana menyukai fotomu",
-    },
-    token: registrationToken,
-  };
-
-  // Send a message to the device corresponding to the provided
-  // registration token.
-  admin
-    .messaging()
-    .send(message)
-    .then((response) => {
-      // Response is a message ID string.
-      console.log("Successfully sent message:", response);
-      res.send("Jadi");
-    })
-    .catch((error) => {
-      console.log("Error sending message:", error);
-      res.send(error);
-    });
-});
-
-require("./app/routes/auth.routes")(app);
-require("./app/routes/post.routes")(app);
-require("./app/routes/comment.routes")(app);
-require("./app/routes/like.routes")(app);
-require("./app/routes/firebaseToken.routes")(app);
+app.use(authRoutes);
+app.use(postRoutes);
+app.use(commentRoutes);
+app.use(likeRoutes);
+app.use(firebaseRoutes);
 
 app.use("/image", express.static("uploads"));
 

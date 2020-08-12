@@ -4,6 +4,8 @@ const Post = db.post;
 const Comment = db.comment;
 const jwt = require("jsonwebtoken");
 const auth = require("../helper/auth");
+const FirebaseToken = require("../models/firebaseToken.model");
+const { sendNotification } = require("../helper/notification");
 
 exports.post = async (req, res) => {
   const token = req.headers["authorization"].split(" ")[1];
@@ -20,6 +22,15 @@ exports.post = async (req, res) => {
     const commentData = await comment.save();
     //send response
     if (commentData) {
+      const dataPost = await Post.findById(req.body.post_id);
+      const dataToken = await FirebaseToken.find({ user_id: dataPost.user_id });
+      const tokens = [];
+      dataToken.forEach((token) => {
+        tokens.push(token.token);
+      });
+      const message = `${dataUser.username} berkomentar pada foto anda`;
+      sendNotification(tokens, message);
+
       res.send({
         status: true,
         message: "Comment is uploaded",
